@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>₽ за ккал</title>
+  <title>₽ за 3000 ккал</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -13,7 +13,7 @@
     }
 
     .container {
-      max-width: 400px;
+      max-width: 360px;
       margin: 0 auto;
       background: white;
       padding: 20px;
@@ -37,10 +37,10 @@
       width: 100%;
       padding: 12px;
       font-size: 16px;
-      margin-top: 4px;
       box-sizing: border-box;
       border: 1px solid #ccc;
       border-radius: 8px;
+      margin-top: 4px;
     }
 
     #result {
@@ -53,21 +53,11 @@
 </head>
 <body>
   <div class="container">
-    <h1>Калькулятор: ₽ за ккал</h1>
+    <h1>₽ за 3000 ккал</h1>
 
     <label>
-      Ккал на 100 г:
-      <input type="number" id="kcalPer100" step="any" inputmode="decimal" />
-    </label>
-
-    <label>
-      Граммов:
-      <input type="number" id="grams" step="any" inputmode="decimal" />
-    </label>
-
-    <label>
-      Или всего ккал:
-      <input type="number" id="totalKcal" step="any" inputmode="decimal" />
+      Ккал всего:
+      <input type="number" id="kcal" step="any" inputmode="decimal" />
     </label>
 
     <label>
@@ -78,56 +68,45 @@
     <div id="result">—</div>
   </div>
 
-<script>
-  const kcalPer100Input = document.getElementById("kcalPer100");
-  const gramsInput = document.getElementById("grams");
-  const totalKcalInput = document.getElementById("totalKcal");
-  const priceInput = document.getElementById("price");
-  const resultDiv = document.getElementById("result");
+  <script>
+    const kcalInput = document.getElementById("kcal");
+    const priceInput = document.getElementById("price");
+    const resultDiv = document.getElementById("result");
 
-  const greenMax = 700;
-  const yellowMax = 1300;
+    const greenMax = 700;
+    const yellowMax = 1300;
 
-  const inputs = [kcalPer100Input, gramsInput, totalKcalInput, priceInput];
-  inputs.forEach(input => input.addEventListener("input", calculate));
+    kcalInput.addEventListener("input", calculate);
+    priceInput.addEventListener("input", calculate);
 
-  function calculate() {
-    const kcalPer100 = parseFloat(kcalPer100Input.value);
-    const grams = parseFloat(gramsInput.value);
-    const totalKcal = parseFloat(totalKcalInput.value);
-    const price = parseFloat(priceInput.value);
+    function calculate() {
+      const kcal = parseFloat(kcalInput.value);
+      const price = parseFloat(priceInput.value);
 
-    if (isNaN(price) || price <= 0) {
-      resultDiv.textContent = "Введите цену";
-      resultDiv.style.color = "black";
-      return;
+      if (isNaN(kcal) || kcal <= 0) {
+        resultDiv.textContent = "Введите калории";
+        resultDiv.style.color = "black";
+        return;
+      }
+
+      if (isNaN(price) || price <= 0) {
+        resultDiv.textContent = "Введите цену";
+        resultDiv.style.color = "black";
+        return;
+      }
+
+      const costFor3000 = (price / kcal) * 3000;
+
+      let color = "red";
+      if (costFor3000 <= greenMax) {
+        color = "green";
+      } else if (costFor3000 <= yellowMax) {
+        color = "orange";
+      }
+
+      resultDiv.textContent = `Рацион на 3000 ккал ≈ ${Math.round(costFor3000)} ₽`;
+      resultDiv.style.color = color;
     }
-
-    let kcal;
-
-    if (!isNaN(totalKcal) && totalKcal > 0) {
-      kcal = totalKcal;
-    } else if (!isNaN(kcalPer100) && !isNaN(grams) && kcalPer100 > 0 && grams > 0) {
-      kcal = (kcalPer100 / 100) * grams;
-    } else {
-      resultDiv.textContent = "Введите калорийность";
-      resultDiv.style.color = "black";
-      return;
-    }
-
-    const costFor3000 = (price / kcal) * 3000;
-
-    let color = "red";
-    if (costFor3000 <= greenMax) {
-      color = "green";
-    } else if (costFor3000 <= yellowMax) {
-      color = "orange";
-    }
-
-resultDiv.textContent = `Рацион на 3000 ккал ≈ ${Math.round(costFor3000)} ₽`;
-    resultDiv.style.color = color;
-  }
-</script>
-
+  </script>
 </body>
 </html>
